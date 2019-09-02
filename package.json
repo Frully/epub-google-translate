@@ -1,11 +1,11 @@
 {
   "name": "epub-google-translate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Translate ePub file using Google Translate.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/YOUR_GITHUB_USER_NAME/epub-google-translate",
+  "repository": "https://github.com/Frully/epub-google-translate",
   "license": "MIT",
   "keywords": [],
   "scripts": {
