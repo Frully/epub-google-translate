@@ -21,9 +21,7 @@ export async function translateEpub(
   const transOpf = await translateOpf(await epub.getOpf(), options)
   await epub.setOpf(transOpf)
 
-  await bluebird.map(epub.manifest, file => handleFile(file, options), {
-    concurrency: 10,
-  })
+  await bluebird.each(epub.manifest, file => handleFile(file, options))
 
   return epub.toBuffer()
 }
