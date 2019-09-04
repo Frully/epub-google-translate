@@ -1,6 +1,6 @@
+import { AxiosProxyConfig } from 'axios'
 import bluebird from 'bluebird'
 import { parseEpub } from 'epub-modify'
-import { AxiosProxyConfig } from 'axios'
 
 import { translateNcx, translateOpf, translateXhtml } from './translate'
 
@@ -9,7 +9,7 @@ interface TranslateEpubOptions {
   readonly to: string
   readonly tld?: string
   readonly proxy?: AxiosProxyConfig
-  readonly config?: Object
+  readonly config?: object
 }
 
 export async function translateEpub(
