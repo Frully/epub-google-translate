@@ -1,5 +1,5 @@
+import translate, { parseMultiple } from '@frully/google-translate-open-api'
 import cheerio from 'cheerio'
-import translate, { parseMultiple } from 'google-translate-open-api'
 import translateHtml from 'html-google-translate'
 import htmlToText from 'html-to-text'
 
