@@ -35,13 +35,18 @@ async function handleFile(file, options): Promise<void> {
   const text = await file.getText()
   let transText
 
-  switch (file['media-type']) {
-    case Types.xhtml:
-      transText = await translateXhtml(text, options)
-      break
-    case Types.ncx:
-      transText = await translateNcx(text, options)
-      break
+  try {
+    switch (file['media-type']) {
+      case Types.xhtml:
+        transText = await translateXhtml(text, options)
+        break
+      case Types.ncx:
+        transText = await translateNcx(text, options)
+        break
+    }
+  } catch (err) {
+    err.message = err.message + ' ' + file.href
+    throw err
   }
 
   if (transText) {
