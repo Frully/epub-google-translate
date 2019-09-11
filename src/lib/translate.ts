@@ -1,42 +1,40 @@
 import translate, { parseMultiple } from '@frully/google-translate-open-api'
 import cheerio from 'cheerio'
+import * as entities from 'entities'
 import translateHtml from 'html-google-translate'
-import htmlToText from 'html-to-text'
 
 async function transTexts(text, options) {
   const texts = Array.isArray(text) ? text : [text]
 
-  const result = await translate(texts, options)
+  const res = await translate(texts, options)
 
   const transTextArr =
-    typeof result.data === 'string'
-      ? [result.data]
-      : parseMultiple(result.data[0])
+    typeof res.data === 'string' ? [res.data] : parseMultiple(res.data[0])
 
   return transTextArr
 }
 
-async function transText(text, options) {
-  return transTexts(text, options)[0]
-}
-
 export async function translateOpf(xml, options) {
-  const $ = cheerio.load(xml, { xmlMode: true })
+  const $ = cheerio.load(xml, { xmlMode: true, decodeEntities: false })
 
-  const $title = $('dc\\:title').first()
+  const $nodes = $('dc\\:title, dc\\:description, title, description')
 
-  if ($title.length) {
-    $title.text(await transText($title.text(), options))
-  }
+  const texts = $nodes.map((_, elem) => $(elem).text()).get()
 
-  const $description = $('dc\\:description').first()
+  const trTexts = await transTexts(texts, options)
 
-  if ($description.length) {
-    const desc = htmlToText.fromString($description.html(), { wordwrap: false })
-    $description.text(await transText(desc, options))
-  }
+  $nodes.each((i, elem) => {
+    const $elem = $(elem)
 
-  $('dc\\:language').text(options.to)
+    const trText =
+      elem.name === 'dc:description' || elem.name === 'description'
+        ? entities.encode(trTexts[i])
+        : trTexts[i]
+
+    $elem.text(trText)
+  })
+
+  $('dc\\:language, language').text(options.to)
 
   return $.xml()
 }

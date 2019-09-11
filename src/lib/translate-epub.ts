@@ -1,6 +1,7 @@
 import { AxiosProxyConfig } from 'axios'
 import bluebird from 'bluebird'
 import { parseEpub } from 'epub-modify'
+import retry from 'p-retry'
 
 import { translateNcx, translateOpf, translateXhtml } from './translate'
 
@@ -18,8 +19,13 @@ export async function translateEpub(
 ): Promise<Buffer> {
   const epub = await parseEpub(buffer)
 
-  const transOpf = await translateOpf(await epub.getOpf(), options)
-  await epub.setOpf(transOpf)
+  await retry(
+    async () => {
+      const transOpf = await translateOpf(await epub.getOpf(), options)
+      await epub.setOpf(transOpf)
+    },
+    { retries: 2 },
+  )
 
   await bluebird.each(epub.manifest, file => handleFile(file, options))
 
@@ -36,14 +42,19 @@ async function handleFile(file, options): Promise<void> {
   let transText
 
   try {
-    switch (file['media-type']) {
-      case Types.xhtml:
-        transText = await translateXhtml(text, options)
-        break
-      case Types.ncx:
-        transText = await translateNcx(text, options)
-        break
-    }
+    await retry(
+      async () => {
+        switch (file['media-type']) {
+          case Types.xhtml:
+            transText = await translateXhtml(text, options)
+            break
+          case Types.ncx:
+            transText = await translateNcx(text, options)
+            break
+        }
+      },
+      { retries: 2 },
+    )
   } catch (err) {
     err.message = err.message + ' ' + file.href
     throw err
