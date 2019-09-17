@@ -38,7 +38,6 @@ const Types = {
 }
 
 async function handleFile(file, options): Promise<void> {
-  const text = await file.getText()
   let transText
 
   try {
@@ -46,10 +45,10 @@ async function handleFile(file, options): Promise<void> {
       async () => {
         switch (file['media-type']) {
           case Types.xhtml:
-            transText = await translateXhtml(text, options)
+            transText = await translateXhtml(await file.getText(), options)
             break
           case Types.ncx:
-            transText = await translateNcx(text, options)
+            transText = await translateNcx(await file.getText(), options)
             break
         }
       },
