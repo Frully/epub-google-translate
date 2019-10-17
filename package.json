@@ -1,6 +1,6 @@
 {
   "name": "epub-google-translate",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Translate ePub file using Google Translate.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -57,7 +57,7 @@
     "bluebird": "^3.5.5",
     "cheerio": "^1.0.0-rc.3",
     "entities": "^2.0.0",
-    "epub-modify": "^0.1.6",
+    "epub-modify": "^0.2.0",
     "html-google-translate": "^1.0.12",
     "mz": "^2.7.0",
     "p-retry": "^4.1.0"

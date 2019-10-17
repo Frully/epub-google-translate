@@ -38,6 +38,10 @@ const Types = {
 }
 
 async function handleFile(file, options): Promise<void> {
+  if (!file.isExists) {
+    return
+  }
+
   let transText
 
   try {
